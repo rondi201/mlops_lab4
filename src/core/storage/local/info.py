@@ -1,8 +1,10 @@
 import typing
 from .. import AbstractStorageInfo
 
+from .configs import LocalStorageConfig
+
 if typing.TYPE_CHECKING:
-    from .storage import LocalStorage, LocalStorageConfig
+    from .storage import LocalStorage
 
 
 class LocalStorageInfo(AbstractStorageInfo):
