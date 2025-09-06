@@ -77,38 +77,41 @@ pipeline {
         stage('Check auto tests') {
             steps {
                 script {
-                    // Добавим цветовую тему
-                    ansiColor('xterm') {
-                        // Запустим автотесты с помощью Ansible Playbook
-                        ansiblePlaybook(
-                            playbook: "playbooks/test.yaml",
-                            // Пароль от Ansible Vaults
-                            vaultCredentialsId: "${ANSIBLE_VAULT_CREDS_NAME}",
-                            colorized: true,
-                            extraVars: [
-                                compose_env_params: "${COMPOSE_ENV_PARAMS}",
-                                db_vault_file: "vars/app_database/vault.${BUILD_NAME}.yaml",
-                                // Сохраним логи автотестов
-                                app_test_report_file: "../test-results.xml",
-                                // Сохраним отчет о покрытии автотестами
-                                app_coverage_report_html_dir: "../coverage-report"
+                    try{
+                        // Добавим цветовую тему
+                        ansiColor('xterm') {
+                            // Запустим автотесты с помощью Ansible Playbook
+                            ansiblePlaybook(
+                                playbook: "playbooks/test.yaml",
+                                // Пароль от Ansible Vaults
+                                vaultCredentialsId: "${ANSIBLE_VAULT_CREDS_NAME}",
+                                colorized: true,
+                                extraVars: [
+                                    compose_env_params: "${COMPOSE_ENV_PARAMS}",
+                                    db_vault_file: "vars/app_database/vault.${BUILD_NAME}.yaml",
+                                    // Сохраним логи автотестов
+                                    app_test_report_file: "../test-results.xml",
+                                    // Сохраним отчет о покрытии автотестами
+                                    app_coverage_report_html_dir: "../coverage-report"
+                                ]
+                            )
+                        }
+                    } finally {
+                        // Зафиксируем результат тестирования
+                        junit testResults: 'test-results.xml'
+                        // Зафиксируем отчет о покрытии
+                        publishHTML (
+                            target : [
+                                allowMissing: false,
+                                alwaysLinkToLastBuild: true,
+                                keepAll: true,
+                                reportDir: 'coverage-report',
+                                reportFiles: 'index.html',
+                                reportName: 'Coverage report',
+                                // reportTitles: ''
                             ]
                         )
                     }
-                    // Зафиксируем результат тестирования
-                    junit testResults: 'test-results.xml'
-                    // Зафиксируем отчет о покрытии
-                    publishHTML (
-                        target : [
-                            allowMissing: false,
-                            alwaysLinkToLastBuild: true,
-                            keepAll: true,
-                            reportDir: 'coverage-report',
-                            reportFiles: 'index.html',
-                            reportName: 'Coverage report',
-                            // reportTitles: ''
-                        ]
-                    )
                 }
             }
         }
