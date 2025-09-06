@@ -24,10 +24,17 @@ async def seed_mlmodels(config_path: str | PathLike, session: AsyncSession):
     with open(config_path) as file:
         config: dict[str, Any] = json.load(file)
 
+    # Проверим что используется локальное хранилище (иное не поддерживается с библиотекой Fedot)
+    ws_config = config_manager.weights_storage_config
+    if ws_config.backend != "local":
+        raise RuntimeError(
+            f"Non local backend as '{ws_config.backend}' does not supported."
+        )
+    # Получим путь до сохранённой модели
+    weights_root = ws_config.local.mounted_dir
+
     # Проверим наличие данных для переданных сущностей
     for row in config["data"]:
-        # Получим путь до сохранённой модели
-        weights_root = config_manager.storage_config.weights_root
         name = row["name"]
         model_path = Path(weights_root, name)
         # Проверим, что он существует

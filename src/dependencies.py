@@ -16,6 +16,7 @@ from src.database.session import DatabaseSessionBuilder, AsyncSession
 from src.database.repository import DatabaseRepository
 from src.config import config_manager
 from src.core.logger import LoggerFactory
+from src.core.storage import AbstractStorage, get_storage_backend_info
 
 
 @cache
@@ -38,13 +39,27 @@ async def get_database_session() -> AsyncGenerator[AsyncSession, None]:
         yield session
 
 
-async def get_database_repository(
+def get_database_repository(
     session: AsyncSession = Depends(get_database_session),
 ) -> DatabaseRepository:
     """Получение репозитория для работы с базой данных"""
     return DatabaseRepository(session)
 
 
-async def get_app_logger() -> Logger:
+def get_datasets_storage() -> AbstractStorage:
+    """Получение объекта хранилища для логирования сообщений"""
+    # Получим конфигурацию хранилища
+    ds_config = config_manager.datasets_storage_config
+    # Получим информацию о модуле
+    backend_info = get_storage_backend_info(ds_config.backend)
+    # Получим конфигурацию хранилища
+    storage_config = getattr(ds_config, ds_config.backend)
+    # Соберём экземпляр хранилища из конфигурации
+    storage = backend_info.storage_type.from_config(storage_config)
+
+    return storage
+
+
+def get_app_logger() -> Logger:
     """Получение логгера для логирования сообщений"""
     return LoggerFactory.get_logger("APP")

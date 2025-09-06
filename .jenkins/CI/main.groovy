@@ -11,8 +11,8 @@ pipeline {
     environment {
         DOCKERHUB_CREDS = credentials('dockerhub')
         DVC_MINIO_CREDS = credentials('dvc_minio')
-        REPO_NAME = 'mlops_lab3'
-        PROJECT_NAME = 'mlops-lab3'
+        REPO_NAME = 'mlops_lab4'
+        PROJECT_NAME = 'mlops-lab4'
         // Настройки внутри docker-container
         // Префикс в собираемых образах docker (если не master ветка - добавим префикс для исключения перезаписи образов)
         IMAGE_SUFFIX = "${env.BRANCH_NAME == 'master' ? '' : env.BRANCH_NAME}"

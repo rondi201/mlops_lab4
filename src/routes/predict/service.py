@@ -15,8 +15,14 @@ AutoMLInputData = Any
 class PredictService:
     @staticmethod
     def _get_model_path(ml_model: MLModel) -> Path:
+        # Проверим что используется локальное хранилище (иное не поддерживается с библиотекой Fedot)
+        ws_config = config_manager.weights_storage_config
+        if ws_config.backend != "local":
+            raise RuntimeError(
+                f"Non local backend as '{ws_config.backend}' does not supported."
+            )
         # Получим путь до сохранённой модели
-        weights_root = config_manager.storage_config.weights_root
+        weights_root = ws_config.local.mounted_dir
         model_path = Path(weights_root, ml_model.name)
         # Если нет весов для модели - сообщим об ошибке
         if not model_path.exists():

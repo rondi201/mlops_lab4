@@ -1,7 +1,7 @@
 services:
   api:
     # Основной backend сервис
-    image: rondi201/mlops-lab3-api${IMAGE_SUFFIX:+-}${IMAGE_SUFFIX:-}:latest
+    image: rondi201/mlops-lab4-api${IMAGE_SUFFIX:+-}${IMAGE_SUFFIX:-}:latest
     build:
       context: ./
       dockerfile: Dockerfile
@@ -45,26 +45,7 @@ services:
       timeout: 3s
       retries: 3
     restart: unless-stopped
-    # mssql:
-    #   # Сервис базы данных MS SQL Server
-    #   # image: mcr.microsoft.com/mssql/server:2022-latest
 
-    #   user: root # Для доступа к записи в mssql_data volume
-    #   ports:
-    #     - "1433:1433"
-    #   expose:
-    #     - 1433
-    #   environment:
-    #     ACCEPT_EULA: Y
-    #     MSSQL_SA_PASSWORD: ${DB_PASSWORD}
-    #   healthcheck:
-    #     test: /opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P "$$MSSQL_SA_PASSWORD" -Q "SELECT 1" || exit 1
-    #     interval: 30s
-    #     timeout: 3s
-    #     retries: 10
-    #     start_period: 10s
-    #   volumes:
-    #     - mssql-data:/var/opt/mssql/data
 
 volumes:
   postgres-data:
