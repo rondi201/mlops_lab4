@@ -97,3 +97,6 @@ class LocalStorage(AbstractStorage):
     def close(self):
         # Закрытие подключения не требуется
         pass
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(mounted_dir={self._mounted_dir})"

@@ -40,7 +40,7 @@ class ConfigManager:
 
     @property
     def weights_storage_config(self) -> StorageConfig:
-        return self.get_settings().storage.datasets
+        return self.get_settings().storage.weights
 
     @property
     def seeding_config(self) -> SeedingConfig:
